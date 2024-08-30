@@ -580,7 +580,7 @@ namespace Freya {
 		[MethodImpl( INLINE )] public static Vector3Int CeilToInt( Vector3 value ) => new Vector3Int( (int)Math.Ceiling( value.x ), (int)Math.Ceiling( value.y ), (int)Math.Ceiling( value.z ) );
 
 		/// <summary>Rounds the value to the nearest integer</summary>
-		[MethodImpl( INLINE )] public static float Round( float value, MidpointRounding midpointRounding = MidpointRounding.ToEven ) => (float)MathF.Round( value, midpointRounding );
+		[MethodImpl( INLINE )] public static float Round( float value, MidpointRounding midpointRounding = MidpointRounding.ToEven ) => (float)Math.Round( value, midpointRounding );
 
 		/// <summary>Rounds the vector components to the nearest integer</summary>
 		[MethodImpl( INLINE )] public static Vector2 Round( Vector2 value, MidpointRounding midpointRounding = MidpointRounding.ToEven ) => new Vector2( (float)Math.Round( value.x, midpointRounding ), (float)Math.Round( value.y, midpointRounding ) );

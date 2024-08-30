@@ -129,7 +129,7 @@ namespace Freya {
 				if( line.Intersect( line2, out Vector2 pt ) )
 					miterPts.Add( pt );
 				else {
-					Debug.LogError( $"{line.origin},{line.dir}\n{line2.origin},{line2.dir}\nPoints:{string.Join( '\n', points )}" );
+					Debug.LogError( $"{line.origin},{line.dir}\n{line2.origin},{line2.dir}\nPoints:{string.Join( "\n", points )}" );
 					throw new Exception( "Line intersection failed" );
 				}
 				// prev = line;

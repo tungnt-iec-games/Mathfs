@@ -122,7 +122,8 @@ namespace Freya {
 			for( int dir = -1; dir <= 1; dir += 2 ) {
 				for( int i = 1; i < poly.Count; i++ ) {
 					int index = sourceIndex + dir * i;
-					if( states[index.Mod( states.Count )] is PointSideState.Discard or PointSideState.Edge ) {
+					var state = states[index.Mod(states.Count)];
+                    if (state == PointSideState.Discard || state == PointSideState.Edge ) {
 						// hit the front edge
 						Line2D edge = new Line2D( poly[index - dir], poly[index] - poly[index - dir] );
 						if( IntersectionTest.LinearTValues( line, edge, out float tLine, out float tEdge ) ) {

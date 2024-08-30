@@ -18,9 +18,9 @@ namespace Freya {
 				}
 			}
 		}
-		public Matrix3x1 X => new(m0.x, m1.x, m2.x);
-		public Matrix3x1 Y => new(m0.y, m1.y, m2.y);
-		public Matrix3x1 Z => new(m0.z, m1.z, m2.z);
+		public Matrix3x1 X => new Matrix3x1(m0.x, m1.x, m2.x);
+		public Matrix3x1 Y => new Matrix3x1(m0.y, m1.y, m2.y);
+		public Matrix3x1 Z => new Matrix3x1(m0.z, m1.z, m2.z);
 		/// <summary>Linearly interpolates between two matrices, based on a value <c>t</c></summary>
 		/// <param name="t">The value to blend by</param>
 		public static Vector3Matrix3x1 Lerp( Vector3Matrix3x1 a, Vector3Matrix3x1 b, float t ) => new Vector3Matrix3x1(Vector3.LerpUnclamped( a.m0, b.m0, t ), Vector3.LerpUnclamped( a.m1, b.m1, t ), Vector3.LerpUnclamped( a.m2, b.m2, t ));

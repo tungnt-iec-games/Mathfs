@@ -63,7 +63,7 @@ namespace Freya {
 		/// <param name="value">The range to remap</param>
 		/// <param name="input">The input range</param>
 		/// <param name="output">The output range</param>
-		public static FloatRange Remap( FloatRange value, FloatRange input, FloatRange output ) => new(Remap( value.a, input, output ), Remap( value.b, input, output ));
+		public static FloatRange Remap( FloatRange value, FloatRange input, FloatRange output ) => new FloatRange(Remap( value.a, input, output ), Remap( value.b, input, output ));
 
 		/// <summary>Returns whether or not this range overlaps another range</summary>
 		/// <param name="other">The other range to test overlap with</param>
@@ -110,13 +110,13 @@ namespace Freya {
 		/// <param name="rangeY">The range of the Y axis</param>
 		/// <param name="rangeZ">The range of the Z axis</param>
 		public static Bounds ToBounds( FloatRange rangeX, FloatRange rangeY, FloatRange rangeZ ) {
-			Vector3 center = new(rangeX.Center, rangeY.Center, rangeZ.Center);
-			Vector3 size = new(rangeX.Length, rangeY.Length, rangeZ.Length);
+			Vector3 center = new Vector3(rangeX.Center, rangeY.Center, rangeZ.Center);
+			Vector3 size = new Vector3(rangeX.Length, rangeY.Length, rangeZ.Length);
 			return new Bounds( center, size );
 		}
 
-		public static FloatRange operator -( FloatRange range, float v ) => new(range.a - v, range.b - v);
-		public static FloatRange operator +( FloatRange range, float v ) => new(range.a + v, range.b + v);
+		public static FloatRange operator -( FloatRange range, float v ) => new FloatRange(range.a - v, range.b - v);
+		public static FloatRange operator +( FloatRange range, float v ) => new FloatRange(range.a + v, range.b + v);
 
 		public static implicit operator FloatRange( (float a, float b) tuple ) => new FloatRange( tuple.a, tuple.b );
 		public static bool operator ==( FloatRange a, FloatRange b ) => a.a == b.a && a.b == b.b;
@@ -128,5 +128,44 @@ namespace Freya {
 		public override string ToString() => $"[{a},{b}]";
 
 	}
+
+    internal static class HashCode
+    {
+        public static int Combine<T1, T2>(T1 value1, T2 value2)
+        {
+            int hc1 = (value1?.GetHashCode() ?? 0);
+            int hc2 = (value2?.GetHashCode() ?? 0);
+            int hash = 17;
+            hash = hash * 23 + hc1;
+            hash = hash * 23 + hc2;
+            return hash;
+        }
+
+        public static int Combine<T1, T2, T3>(T1 value1, T2 value2, T3 value3)
+        {
+            int hc1 = (value1?.GetHashCode() ?? 0);
+            int hc2 = (value2?.GetHashCode() ?? 0);
+            int hc3 = (value3?.GetHashCode() ?? 0);
+            int hash = 17;
+            hash = hash * 23 + hc1;
+            hash = hash * 23 + hc2;
+            hash = hash * 23 + hc3;
+            return hash;
+        }
+
+        public static int Combine<T1, T2, T3, T4>(T1 value1, T2 value2, T3 value3, T4 value4)
+        {
+            int hc1 = (value1?.GetHashCode() ?? 0);
+            int hc2 = (value2?.GetHashCode() ?? 0);
+            int hc3 = (value3?.GetHashCode() ?? 0);
+            int hc4 = (value4?.GetHashCode() ?? 0);
+            int hash = 17;
+            hash = hash * 23 + hc1;
+            hash = hash * 23 + hc2;
+            hash = hash * 23 + hc3;
+            hash = hash * 23 + hc4;
+            return hash;
+        }
+    }
 
 }

@@ -118,40 +118,40 @@ namespace Freya {
 		/// <summary>Mirrors this vector around another point. Equivalent to rotating the vector 180° around the point</summary>
 		/// <param name="p">The point to mirror</param>
 		/// <param name="pivot">The point to mirror around</param>
-		[MethodImpl( INLINE )] public static Vector2 MirrorAround( this Vector2 p, Vector2 pivot ) => new(2 * pivot.x - p.x, 2 * pivot.y - p.y);
+		[MethodImpl( INLINE )] public static Vector2 MirrorAround( this Vector2 p, Vector2 pivot ) => new Vector2(2 * pivot.x - p.x, 2 * pivot.y - p.y);
 
 		/// <summary>Mirrors this vector around an x coordinate</summary>
 		/// <param name="p">The point to mirror</param>
 		/// <param name="xPivot">The x coordinate to mirror around</param>
-		[MethodImpl( INLINE )] public static Vector2 MirrorAroundX( this Vector2 p, float xPivot ) => new(2 * xPivot - p.x, p.y);
+		[MethodImpl( INLINE )] public static Vector2 MirrorAroundX( this Vector2 p, float xPivot ) => new Vector2(2 * xPivot - p.x, p.y);
 
 		/// <summary>Mirrors this vector around a y coordinate</summary>
 		/// <param name="p">The point to mirror</param>
 		/// <param name="yPivot">The y coordinate to mirror around</param>
-		[MethodImpl( INLINE )] public static Vector2 MirrorAroundY( this Vector2 p, float yPivot ) => new(p.x, 2 * yPivot - p.y);
+		[MethodImpl( INLINE )] public static Vector2 MirrorAroundY( this Vector2 p, float yPivot ) => new Vector2(p.x, 2 * yPivot - p.y);
 
 		/// <inheritdoc cref="MirrorAroundX(Vector2,float)"/>
-		[MethodImpl( INLINE )] public static Vector3 MirrorAroundX( this Vector3 p, float xPivot ) => new(2 * xPivot - p.x, p.y, p.z);
+		[MethodImpl( INLINE )] public static Vector3 MirrorAroundX( this Vector3 p, float xPivot ) => new Vector3(2 * xPivot - p.x, p.y, p.z);
 
 		/// <inheritdoc cref="MirrorAroundY(Vector2,float)"/>
-		[MethodImpl( INLINE )] public static Vector3 MirrorAroundY( this Vector3 p, float yPivot ) => new(p.x, 2 * yPivot - p.y, p.z);
+		[MethodImpl( INLINE )] public static Vector3 MirrorAroundY( this Vector3 p, float yPivot ) => new Vector3(p.x, 2 * yPivot - p.y, p.z);
 
 		/// <summary>Mirrors this vector around a y coordinate</summary>
 		/// <param name="p">The point to mirror</param>
 		/// <param name="zPivot">The z coordinate to mirror around</param>
-		[MethodImpl( INLINE )] public static Vector3 MirrorAroundZ( this Vector3 p, float zPivot ) => new(p.x, p.y, 2 * zPivot - p.z);
+		[MethodImpl( INLINE )] public static Vector3 MirrorAroundZ( this Vector3 p, float zPivot ) => new Vector3(p.x, p.y, 2 * zPivot - p.z);
 
 		/// <inheritdoc cref="MirrorAround(Vector2,Vector2)"/>
-		[MethodImpl( INLINE )] public static Vector3 MirrorAround( this Vector3 p, Vector3 pivot ) => new(2 * pivot.x - p.x, 2 * pivot.y - p.y, 2 * pivot.z - p.z);
+		[MethodImpl( INLINE )] public static Vector3 MirrorAround( this Vector3 p, Vector3 pivot ) => new Vector3(2 * pivot.x - p.x, 2 * pivot.y - p.y, 2 * pivot.z - p.z);
 
 		/// <summary>Scale the point <c>p</c> around <c>pivot</c> by <c>scale</c></summary>
 		/// <param name="p">The point to scale</param>
 		/// <param name="pivot">The pivot to scale around</param>
 		/// <param name="scale">The scale to scale by</param>
-		[MethodImpl( INLINE )] public static Vector2 ScaleAround( this Vector2 p, Vector2 pivot, Vector2 scale ) => new(pivot.x + ( p.x - pivot.x ) * scale.x, pivot.y + ( p.y - pivot.y ) * scale.y);
+		[MethodImpl( INLINE )] public static Vector2 ScaleAround( this Vector2 p, Vector2 pivot, Vector2 scale ) => new Vector2(pivot.x + ( p.x - pivot.x ) * scale.x, pivot.y + ( p.y - pivot.y ) * scale.y);
 
 		/// <inheritdoc cref="ScaleAround(Vector2,Vector2,Vector2)"/>
-		[MethodImpl( INLINE )] public static Vector3 ScaleAround( this Vector3 p, Vector3 pivot, Vector3 scale ) => new(pivot.x + ( p.x - pivot.x ) * scale.x, pivot.y + ( p.y - pivot.y ) * scale.y, pivot.z + ( p.z - pivot.z ) * scale.z);
+		[MethodImpl( INLINE )] public static Vector3 ScaleAround( this Vector3 p, Vector3 pivot, Vector3 scale ) => new Vector3(pivot.x + ( p.x - pivot.x ) * scale.x, pivot.y + ( p.y - pivot.y ) * scale.y, pivot.z + ( p.z - pivot.z ) * scale.z);
 
 
 		#region Quaternions
@@ -173,7 +173,7 @@ namespace Freya {
 
 		/// <summary>Returns the natural exponent of a quaternion</summary>
 		public static Quaternion Exp( this Quaternion q ) {
-			Vector3 v = new(q.x, q.y, q.z);
+			Vector3 v = new Vector3(q.x, q.y, q.z);
 			double vMag = Math.Sqrt( (double)v.x * v.x + (double)v.y * v.y + (double)v.z * v.z );
 			double sc = Math.Exp( q.w );
 			double scV = sc * Mathfs.Sinc( vMag );
@@ -252,7 +252,7 @@ namespace Freya {
 		/// <param name="r">The rectangle to get a position within</param>
 		/// <param name="tPos">The normalized position within this rectangle</param>
 		public static Vector2 Lerp( this Rect r, Vector2 tPos ) =>
-			new(
+			new Vector3(
 				Mathfs.Lerp( r.xMin, r.xMax, tPos.x ),
 				Mathfs.Lerp( r.yMin, r.yMax, tPos.y )
 			);
@@ -329,7 +329,7 @@ namespace Freya {
 				int colWidth = 4; // min width
 				string[] columnEntries = new string[rowCount];
 				for( int row = 0; row < rowCount; row++ ) {
-					string s = m[row, c].StartsWith( '-' ) ? "" : " ";
+					string s = m[row, c].StartsWith( "-" ) ? "" : " ";
 					columnEntries[row] = $"{s}{m[row, c]}{endBit}";
 					colWidth = Mathfs.Max( colWidth, columnEntries[row].Length );
 				}
@@ -339,7 +339,7 @@ namespace Freya {
 				}
 			}
 
-			return string.Join( '\n', r );
+			return string.Join( "\n", r );
 		}
 
 		#endregion
@@ -354,8 +354,8 @@ namespace Freya {
 				m.m30 * v.m0 + m.m31 * v.m1 + m.m32 * v.m2 + m.m33 * v.m3
 			);
 
-		public static Vector2Matrix4x1 MultiplyColumnVector( this Matrix4x4 m, Vector2Matrix4x1 v ) => new(m.MultiplyColumnVector( v.X ), m.MultiplyColumnVector( v.Y ));
-		public static Vector3Matrix4x1 MultiplyColumnVector( this Matrix4x4 m, Vector3Matrix4x1 v ) => new(m.MultiplyColumnVector( v.X ), m.MultiplyColumnVector( v.Y ), m.MultiplyColumnVector( v.Z ));
+		public static Vector2Matrix4x1 MultiplyColumnVector( this Matrix4x4 m, Vector2Matrix4x1 v ) => new Vector2Matrix4x1(m.MultiplyColumnVector( v.X ), m.MultiplyColumnVector( v.Y ));
+		public static Vector3Matrix4x1 MultiplyColumnVector( this Matrix4x4 m, Vector3Matrix4x1 v ) => new Vector3Matrix4x1(m.MultiplyColumnVector( v.X ), m.MultiplyColumnVector( v.Y ), m.MultiplyColumnVector( v.Z ));
 
 		#endregion
 
