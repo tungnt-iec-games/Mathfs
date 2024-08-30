@@ -19,10 +19,24 @@ namespace Freya {
 
 		public static readonly bool[] bools = { false, true };
 
-		#region Constants
+        #region Object Pool
 
-		/// <summary>The circle constant. Defined as the circumference of a circle divided by its radius. Equivalent to 2*pi</summary>
-		public const float TAU = 6.28318530717959f;
+		public static void RecyclePool()
+		{
+			Polygon.RecyclePool();
+			PolygonClipper.RecyclePool();
+            PolygonClipper.PolygonSection.RecyclePool();
+
+			ListPool<Polygon>.RecyclePool();
+			ListPool<Vector2>.RecyclePool();
+        }
+
+        #endregion
+
+        #region Constants
+
+        /// <summary>The circle constant. Defined as the circumference of a circle divided by its radius. Equivalent to 2*pi</summary>
+        public const float TAU = 6.28318530717959f;
 
 		/// <summary>An obscure circle constant. Defined as the circumference of a circle divided by its diameter. Equivalent to 0.5*tau</summary>
 		public const float PI = 3.14159265359f;

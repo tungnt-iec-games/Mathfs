@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using uPools;
 
 namespace Freya {
 
@@ -24,13 +25,55 @@ namespace Freya {
 		}
 
 		public class PolygonSection : IComparable<PolygonSection> {
-			public FloatRange tRange;
+
+			private static readonly ObjectPool<PolygonSection> pool = new ObjectPool<PolygonSection>( () => new PolygonSection( default, null ) );
+			private static readonly List<PolygonSection> used = new List<PolygonSection>();
+
+			public static PolygonSection Create(FloatRange tRange, List<Vector2> points)
+			{
+				var item = pool.Rent();
+				used.Add(item);
+				item.tRange = tRange;
+				item.points = points;
+				return item;
+			}
+
+			public static void RecyclePool()
+			{
+                foreach (var item in used)
+                {
+					pool.Return(item);
+                }
+				used.Clear();
+            }
+
+            public FloatRange tRange;
 			public List<Vector2> points;
 			public PolygonSection( FloatRange tRange, List<Vector2> points ) => ( this.tRange, this.points ) = ( tRange, points );
 			public int CompareTo( PolygonSection other ) => tRange.Min.CompareTo( other.tRange.Min );
 		}
 
-		static List<PointSideState> states = new List<PointSideState>();
+        private static readonly ObjectPool<SortedSet<PolygonSection>> pool = new ObjectPool<SortedSet<PolygonSection>>(() => new SortedSet<PolygonSection>());
+        private static readonly List<SortedSet<PolygonSection>> used = new List<SortedSet<PolygonSection>>();
+
+        public static SortedSet<PolygonSection> CreateSortedSet()
+        {
+            var item = pool.Rent();
+			item.Clear();
+            used.Add(item);
+            return item;
+        }
+
+        public static void RecyclePool()
+        {
+            foreach (var item in used)
+            {
+                pool.Return(item);
+            }
+            used.Clear();
+        }
+
+        static List<PointSideState> states = new List<PointSideState>();
 
 		public static ResultState Clip( Polygon poly, Line2D line, out List<Polygon> clippedPolygons ) {
 			states.Clear();
@@ -63,7 +106,7 @@ namespace Freya {
 			}
 
 			// find keep points, spread outwards until it's cut off from the rest
-			SortedSet<PolygonSection> sections = new SortedSet<PolygonSection>();
+			SortedSet<PolygonSection> sections = CreateSortedSet();
 			for( int i = 0; i < poly.Count; i++ ) {
 				if( states[i] == PointSideState.Keep ) {
 					sections.Add( ExtractPolygonSection( poly, line, i ) );
@@ -71,8 +114,9 @@ namespace Freya {
 			}
 
 			// combine all clipped polygonal regions
-			clippedPolygons = new List<Polygon>();
-			while( sections.Count > 0 ) {
+            clippedPolygons = ListPool<Polygon>.Create();
+
+            while ( sections.Count > 0 ) {
 				// find solid polygon
 				PolygonSection solid = sections.First();
 				sections.Remove( solid );
@@ -85,7 +129,7 @@ namespace Freya {
 					PolygonSection hole = sections.FirstOrDefault( s => s.tRange.Direction != solidDir && checkRange.Contains( s.tRange ) );
 					if( hole == null ) {
 						// nothing inside - we're done with this solid
-						clippedPolygons.Add( new Polygon( solid.points ) );
+						clippedPolygons.Add( Polygon.Create( solid.points ) );
 						break;
 					} else {
 						// append the hole polygon to the solid points
@@ -104,7 +148,7 @@ namespace Freya {
 		}
 
 		static PolygonSection ExtractPolygonSection( Polygon poly, Line2D line, int sourceIndex ) {
-			List<Vector2> points = new List<Vector2>();
+			List<Vector2> points = ListPool<Vector2>.Create();
 
 			void AddBack( int i ) {
 				states[i.Mod( states.Count )] = PointSideState.Handled;
@@ -150,7 +194,7 @@ namespace Freya {
 				}
 			}
 
-			return new PolygonSection( ( tStart, tEnd ), points );
+			return PolygonSection.Create( ( tStart, tEnd ), points );
 		}
 
 

@@ -1,6 +1,9 @@
 {
     "name": "MathfsAsmdef",
-    "references": [],
+    "rootNamespace": "",
+    "references": [
+        "GUID:629a2661df09944a6b53782cbf041d27"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

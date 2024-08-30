@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using uPools;
 using static Freya.Mathfs;
 
 namespace Freya {
@@ -10,8 +11,28 @@ namespace Freya {
 	/// <summary>Polygon with various math functions to test if a point is inside, calculate area, etc.</summary>
 	public class Polygon {
 
-		/// <summary>The points in this polygon</summary>
-		public IReadOnlyList<Vector2> points;
+        private static readonly ObjectPool<Polygon> pool = new ObjectPool<Polygon>(() => new Polygon(null));
+        private static readonly List<Polygon> used = new List<Polygon>();
+
+        public static Polygon Create(IReadOnlyList<Vector2> points)
+        {
+            var item = pool.Rent();
+            used.Add(item);
+            item.points = points;
+            return item;
+        }
+
+        public static void RecyclePool()
+        {
+            foreach (var item in used)
+            {
+                pool.Return(item);
+            }
+            used.Clear();
+        }
+
+        /// <summary>The points in this polygon</summary>
+        public IReadOnlyList<Vector2> points;
 
 		/// <summary>Creates a new 2D polygon</summary>
 		/// <param name="points">The points in the polygon</param>
@@ -114,7 +135,7 @@ namespace Freya {
 		public PolygonClipper.ResultState Clip( Line2D line, out List<Polygon> clippedPolygons ) => PolygonClipper.Clip( this, line, out clippedPolygons );
 
 		public Polygon GetMiterPolygon( float offset ) {
-			List<Vector2> miterPts = new List<Vector2>();
+			List<Vector2> miterPts = ListPool<Vector2>.Create();
 
 			Line2D GetMiterLine( int i ) {
 				Vector2 tangent = ( this[i + 1] - this[i] ).normalized;
@@ -135,7 +156,7 @@ namespace Freya {
 				// prev = line;
 			}
 
-			return new Polygon( miterPts );
+			return Create( miterPts );
 		}
 
 	}

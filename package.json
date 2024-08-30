@@ -10,5 +10,8 @@
     "name": "Freya Holmér",
     "email": "acegikmo@gmail.com",
     "url": "https://acegikmo.com/"
+  },
+  "dependencies": {
+    "com.annulusgames.u-pools": "https://github.com/tungnt-iec-games/uPools.git?path=/Assets/uPools"
   }
 }
