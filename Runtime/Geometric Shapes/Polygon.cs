@@ -159,6 +159,45 @@ namespace Freya {
 			return Create( miterPts );
 		}
 
-	}
+        // from: https://en.wikipedia.org/wiki/Centroid
+        /// <summary>The centroid of this polygon, also known as the center of mass</summary>
+        public Vector2 Centroid
+        {
+            get
+            {
+                Vector2 centroid = Vector2.zero;
+                float signedArea = 0;
+                for (int i = 0; i < Count; i++)
+                {
+                    Vector2 a = points[i];
+                    Vector2 b = points[(i + 1) % Count];
+                    float det = a.x * b.y - b.x * a.y;
+                    signedArea += det;
+                    centroid.x += (a.x + b.x) * det;
+                    centroid.y += (b.y + a.y) * det;
+                }
+                return centroid / (3 * signedArea);
+            }
+        }
+
+        public Vector2 WeightedEdgeCenter
+        {
+            get
+            {
+                Vector2 eCenter = Vector2.zero;
+                float totalLength = 0;
+                for (int i = 0; i < Count; i++)
+                {
+                    Vector2 a = points[i];
+                    Vector2 b = points[(i + 1) % Count];
+                    float length = Vector2.Distance(a, b);
+                    totalLength += length;
+                    eCenter += (a + b) * length;
+                }
+                return eCenter / (2 * totalLength);
+            }
+        }
+
+    }
 
 }
