@@ -75,7 +75,24 @@ namespace Freya {
 
         static List<PointSideState> states = new List<PointSideState>();
 
-		public static ResultState Clip( Polygon poly, Line2D line, out List<Polygon> clippedPolygons ) {
+		public static ResultState SplitConvex(Polygon poly, Line2D line, out List<Polygon> splitPolygons)
+		{
+            splitPolygons = ListPool<Polygon>.Create();
+			Clip(poly, line, out var split1);
+			Clip(poly, new Line2D(line.origin, -line.dir), out var split2);
+			if (split1 != null)
+			{
+				splitPolygons.AddRange(split1);
+			}
+			if (split2 != null)
+			{
+				splitPolygons.AddRange(split2);
+			}
+            return ResultState.Clipped;
+        }
+
+
+        public static ResultState Clip( Polygon poly, Line2D line, out List<Polygon> clippedPolygons ) {
 			states.Clear();
 
 			// first, figure out which side all points are on
