@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using uPools;
 
@@ -53,10 +52,10 @@ namespace Freya {
 			public int CompareTo( PolygonSection other ) => tRange.Min.CompareTo( other.tRange.Min );
 		}
 
-        private static readonly ObjectPool<SortedSet<PolygonSection>> pool = new ObjectPool<SortedSet<PolygonSection>>(() => new SortedSet<PolygonSection>());
-        private static readonly List<SortedSet<PolygonSection>> used = new List<SortedSet<PolygonSection>>();
+        private static readonly ObjectPool<List<PolygonSection>> pool = new ObjectPool<List<PolygonSection>>(() => new List<PolygonSection>());
+        private static readonly List<List<PolygonSection>> used = new List<List<PolygonSection>>();
 
-        public static SortedSet<PolygonSection> CreateSortedSet()
+        public static List<PolygonSection> CreateSortedSet()
         {
             var item = pool.Rent();
 			item.Clear();
@@ -98,7 +97,8 @@ namespace Freya {
 			// first, figure out which side all points are on
 			bool hasDiscards = false;
 			int startIndex = -1;
-			for( int i = 0; i < poly.Count; i++ ) {
+			int count = poly.Count;
+			for( int i = 0; i < count; i++ ) {
 				float sd = line.SignedDistance( poly[i] );
 				if( Mathfs.Approximately( sd, 0 ) )
 					states.Add( PointSideState.Edge );
@@ -123,19 +123,20 @@ namespace Freya {
 			}
 
 			// find keep points, spread outwards until it's cut off from the rest
-			SortedSet<PolygonSection> sections = CreateSortedSet();
-			for( int i = 0; i < poly.Count; i++ ) {
+			var sections = CreateSortedSet();
+			for( int i = 0; i < count; i++ ) {
 				if( states[i] == PointSideState.Keep ) {
 					sections.Add( ExtractPolygonSection( poly, line, i ) );
 				}
 			}
+			sections.Sort();
 
-			// combine all clipped polygonal regions
+            // combine all clipped polygonal regions
             clippedPolygons = ListPool<Polygon>.Create();
 
             while ( sections.Count > 0 ) {
 				// find solid polygon
-				PolygonSection solid = sections.First();
+				PolygonSection solid = sections[0];
 				sections.Remove( solid );
 				int solidDir = solid.tRange.Direction;
 
@@ -143,8 +144,8 @@ namespace Freya {
 				float referencePoint = solid.tRange.Min;
 				while( true ) { // should break early anyway
 					FloatRange checkRange = new FloatRange( referencePoint, solid.tRange.Max );
-					PolygonSection hole = sections.FirstOrDefault( s => s.tRange.Direction != solidDir && checkRange.Contains( s.tRange ) );
-					if( hole == null ) {
+                    var hole = FindSections(sections, solidDir, checkRange);
+                    if ( hole == null ) {
 						// nothing inside - we're done with this solid
 						clippedPolygons.Add( Polygon.Create( solid.points ) );
 						break;
@@ -164,7 +165,18 @@ namespace Freya {
 			return ResultState.Clipped;
 		}
 
-		static PolygonSection ExtractPolygonSection( Polygon poly, Line2D line, int sourceIndex ) {
+		static PolygonSection FindSections(List<PolygonSection> sections, int solidDir, FloatRange checkRange)
+		{
+			foreach(var s in sections)
+			{
+				if (s.tRange.Direction != solidDir && checkRange.Contains(s.tRange))
+					return s;
+			}
+			return null;
+		}
+
+
+        static PolygonSection ExtractPolygonSection( Polygon poly, Line2D line, int sourceIndex ) {
 			List<Vector2> points = ListPool<Vector2>.Create();
 
 			void AddBack( int i ) {
