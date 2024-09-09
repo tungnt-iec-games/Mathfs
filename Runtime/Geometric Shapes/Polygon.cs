@@ -14,7 +14,7 @@ namespace Freya {
         private static readonly ObjectPool<Polygon> pool = new ObjectPool<Polygon>(() => new Polygon(null));
         private static readonly List<Polygon> used = new List<Polygon>();
 
-        public static Polygon Create(IReadOnlyList<Vector2> points)
+        public static Polygon Create(List<Vector2> points)
         {
             var item = pool.Rent();
             used.Add(item);
@@ -32,11 +32,11 @@ namespace Freya {
         }
 
         /// <summary>The points in this polygon</summary>
-        public IReadOnlyList<Vector2> points;
+        public List<Vector2> points;
 
 		/// <summary>Creates a new 2D polygon</summary>
 		/// <param name="points">The points in the polygon</param>
-		public Polygon( IReadOnlyList<Vector2> points ) => this.points = points;
+		public Polygon(List<Vector2> points ) => this.points = points;
 
 		/// <summary>Get a point by index. Indices cannot be out of range, as they will wrap/cycle in the polygon</summary>
 		/// <param name="i">The index of the point</param>
